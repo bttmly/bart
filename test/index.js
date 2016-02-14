@@ -4,6 +4,7 @@ const N = P.number.isRequired;
 
 const bart = require("../src");
 
+// BART's public API key (http://www.bart.gov/schedules/developers/api)
 bart.setDefaults({key: "MW9S-E7SL-26DU-VV8V"});
 
 function throwIfErr (data) {
