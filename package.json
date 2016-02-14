@@ -12,6 +12,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "http-status": "^0.2.0",
     "ramda": "^0.19.1",
     "request": "^2.67.0",
     "xml2js": "^0.4.15"

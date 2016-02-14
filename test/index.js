@@ -21,9 +21,6 @@ function throwIfErr (data) {
   }
 }
 
-const station = P.shape();
-
-
 const base = {
   uri: S,
   date: S,
@@ -69,7 +66,7 @@ const schemas = {
         abbreviation: S,
         limited: N,
         estimate: P.arrayOf(P.shape({
-          minutes: N,
+          minutes: P.oneOfType([P.string, P.number]).isRequired, // number or "Leaving"
           platform: N,
           direction: S,
           length: N,
@@ -168,18 +165,12 @@ const schemas = {
   },
 
   // TODO: unnest holiday property w/ post-transform
-  holidays: {
-    uri: S,
-    holidays: P.arrayOf(P.shape({
-      holiday: P.arrayOf(P.shape({
-        name: S,
-        date: S,
-        schedule_type: S,
-      })).isRequired,
-    })).isRequired,
-  },
+  holidays: P.arrayOf(P.shape({
+    name: S,
+    date: S,
+    schedule_type: S,
+  })).isRequired,
 
-  // no idea how to construct a valid request to this resource
   loadFactor: {
     uri: S,
     load: P.arrayOf(P.shape({
@@ -309,10 +300,6 @@ const schemas = {
     link: S,
   },
 };
-
-
-
-
 
 const runMethod = (name, params, schema) => () => {
   if (schema == null) {

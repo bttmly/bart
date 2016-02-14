@@ -1,5 +1,7 @@
 const request = require("request");
-const parseString = require('xml2js').parseString;
+const parseString = require("xml2js").parseString;
+const HttpStatus = require("http-status");
+
 const R = require("ramda");
 
 let defaults = {};
@@ -51,11 +53,11 @@ function maybeSetFunctionName (fn, name) {
   } catch (e) {}
 }
 
-function makeEndpoint (namespace, cmd, xform) {
+function makeEndpoint (methodName, namespace, cmd, xform) {
   const url = `http://api.bart.gov/api/${namespace}.aspx`
   const base = {cmd};
 
-  return function makeRequest (params, cb) {
+  function makeRequest (params, cb) {
     let resolve, reject, promise;
 
     if (params == null) {
@@ -73,7 +75,7 @@ function makeEndpoint (namespace, cmd, xform) {
 
     function handle (err, result) {
       if (result) result = deepUnXml(result.root);
-      if (xform) result = xform(result);
+      if (result && xform) result = xform(result);
       promise ?
         (err ? reject(err) : resolve(result)) :
         (err ? cb(err) : cb(null, result));
@@ -85,7 +87,7 @@ function makeEndpoint (namespace, cmd, xform) {
       }
 
       if (resp.statusCode > 299) {
-        return handle(new Error(http.STATUS_CODES[resp.statusCode]))
+        return handle(new Error(HttpStatus[resp.statusCode]))
       }
 
       parseString(body, handle);
@@ -94,31 +96,34 @@ function makeEndpoint (namespace, cmd, xform) {
     if (promise) return promise;
   }
 
+  maybeSetFunctionName(makeRequest, methodName);
+
+  return makeRequest;
 }
 
-const methodToCommandMap = {
-  advisories: ["bsa", "bsa"],
-  trainCount: ["bsa", "count"],
-  elevatorInformation: ["bsa", "elev"],
-  realTimeEstimates: ["etd", "etd"],
-  routes: ["route", "routes"],
-  routesInformation: ["route", "routeinfo"],
-  quickPlannerArrive: ["sched", "arrive"],
-  quickPlannerDepart: ["sched", "depart"],
-  fare: ["sched", "fare"],
-  holidays: ["sched", "holiday"],
-  loadFactor: ["sched", "load"],
-  routeSchedule: ["sched", "routesched"],
-  availableSchedules: ["sched", "scheds"],
-  specialSchedules: ["sched", "special", R.path(["special_schedules", 0, "special_schedule"])],
-  stationSchedule: ["sched", "stnsched"],
-  stationList: ["stn", "stns", R.path(["stations", 0, "station"])],
-  stationInformation: ["stn", "stninfo", R.path(["stations", 0, "station", 0])],
-  stationAccessInformation: ["stn", "stnaccess", R.path(["stations", 0, "station", 0])],
-};
+const methodConfigs = [
+  ["advisories", "bsa", "bsa"],
+  ["trainCount", "bsa", "count"],
+  ["elevatorInformation", "bsa", "elev"],
+  ["realTimeEstimates", "etd", "etd"],
+  ["routes", "route", "routes"],
+  ["routesInformation", "route", "routeinfo"],
+  ["quickPlannerArrive", "sched", "arrive"],
+  ["quickPlannerDepart", "sched", "depart"],
+  ["fare", "sched", "fare"],
+  ["holidays", "sched", "holiday", R.path(["holidays", 0, "holiday"])],
+  ["loadFactor", "sched", "load"],
+  ["routeSchedule", "sched", "routesched"],
+  ["availableSchedules", "sched", "scheds"],
+  ["specialSchedules", "sched", "special", R.path(["special_schedules", 0, "special_schedule"])],
+  ["stationSchedule", "sched", "stnsched"],
+  ["stationList", "stn", "stns", R.path(["stations", 0, "station"])],
+  ["stationInformation", "stn", "stninfo", R.path(["stations", 0, "station", 0])],
+  ["stationAccessInformation", "stn", "stnaccess", R.path(["stations", 0, "station", 0])],
+];
 
-Object.keys(methodToCommandMap).forEach(function (k) {
-  module.exports[k] = makeEndpoint(...methodToCommandMap[k]);
+methodConfigs.forEach(function ([methodName, namespace, cmd, xform]) {
+  module.exports[methodName] = makeEndpoint(methodName, namespace, cmd, xform);
 });
 
 module.exports.stations = require("./stations.json");
