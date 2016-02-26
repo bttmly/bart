@@ -75,7 +75,7 @@ function makeEndpoint (methodName, namespace, cmd, xform) {
 
     function handle (err, result) {
       if (result) result = deepUnXml(result.root);
-      if (result && xform) result = xform(result);
+      if (result && xform && !params.raw) result = xform(result); // TODO test raw
       promise ?
         (err ? reject(err) : resolve(result)) :
         (err ? cb(err) : cb(null, result));
