@@ -19,6 +19,8 @@ function throwIfErr (data) {
   if (data.message && data.message[0].error) {
     throw new Error(data.message[0].error[0].details);
   }
+
+  return data;
 }
 
 const base = {
@@ -29,140 +31,95 @@ const base = {
 
 const schemas = {
   
-  advisories: {
-    ...base,
-    bsa: P.arrayOf(P.shape({
-      station: S,
-      description: S,
-      sms_text: S,
-    })).isRequired,
-  },
+  advisories: P.arrayOf(P.shape({
+    station: S,
+    description: S,
+    sms_text: S,
+  })).isRequired,
 
   trainCount: {
-    ...base,
     traincount: N,
   },
 
-  elevatorInformation: {
-    ...base,
-    bsa: P.arrayOf(P.shape({
-      id: S,
-      station: S,
-      type: S,
-      description: S,
-      sms_text: S,
-      posted: S,
-      expires: S,
-    })).isRequired,
-  },
+  elevatorInformation: P.arrayOf(P.shape({
+    id: S,
+    station: S,
+    type: S,
+    description: S,
+    sms_text: S,
+    posted: S,
+    expires: S,
+  })).isRequired,
 
-  realTimeEstimates: {
-    ...base,
-    station: P.arrayOf(P.shape({
-      name: S,
-      abbr: S,
-      etd: P.arrayOf(P.shape({
-        destination: S,
-        abbreviation: S,
-        limited: N,
-        estimate: P.arrayOf(P.shape({
-          minutes: P.oneOfType([P.string, P.number]).isRequired, // number or "Leaving"
-          platform: N,
-          direction: S,
-          length: N,
-          color: S,
-          hexcolor: S,
-          bikeflag: N
-        })).isRequired,
-      })).isRequired
+  realTimeEstimates: P.arrayOf(P.shape({
+    destination: S,
+    abbreviation: S,
+    limited: N,
+    estimate: P.arrayOf(P.shape({
+      minutes: P.oneOfType([P.string, P.number]).isRequired, // number or "Leaving"
+      platform: N,
+      direction: S,
+      length: N,
+      color: S,
+      hexcolor: S,
+      bikeflag: N
     })).isRequired,
-  },
+  })).isRequired,
 
-  routes: {
-    uri: S,
-    sched_num: N,
-    routes: P.arrayOf(P.shape({
-      route: P.arrayOf(P.shape({
-        name: S,
-        abbr: S,
-        routeID: S,
-        number: N,
-        color: S,
-      })).isRequired,
-    })).isRequired,
-  },
+  routes: P.arrayOf(P.shape({
+    name: S,
+    abbr: S,
+    routeID: S,
+    number: N,
+    color: S,
+  })).isRequired,
 
-  routesInformation: {
-    uri: S,
-    sched_num: N,
-    routes: P.arrayOf(P.shape({
-      route: P.arrayOf(P.shape({
-        name: S,
-        abbr: S,
-        routeID: S,
-        number: N,
-        origin: S,
-        destination: S,
-        direction: S,
-        color: S,
-        holidays: N,
-        num_stns: N,
-        config: P.arrayOf(P.shape({
-          station: P.arrayOf(S).isRequired,
-        })).isRequired,
-      })).isRequired,
-    })).isRequired,
-  },
 
-  quickPlanner: {
-    uri: S,
+  routesInformation: P.arrayOf(P.shape({
+    name: S,
+    abbr: S,
+    routeID: S,
+    number: N,
     origin: S,
     destination: S,
-    sched_num: N,
-    schedule: P.arrayOf(P.shape({
-      date: S,
-      time: S,
-      before: N,
-      after: N,
-      request: P.arrayOf(P.shape({
-        trip: P.arrayOf(P.shape({
-          origin: S,
-          destination: S,
-          fare: S,
-          origTimeMin: S,
-          origTimeDate: S,
-          destTimeMin: S,
-          destTimeDate: S,
-          clipper: S,
-          leg: P.arrayOf(P.shape({
-            order: S,
-            transfercode: S,
-            origin: S,
-            destination: S,
-            origTimeMin: S,
-            origTimeDate: S,
-            destTimeMin: S,
-            destTimeDate: S,
-            line: S,
-            bikeflag: S,
-            trainHeadStation: S,
-            trainIdx: S,
-          })).isRequired,
-        })).isRequired,
-      })).isRequired,
+    direction: S,
+    color: S,
+    holidays: N,
+    num_stns: N,
+    config: P.arrayOf(P.shape({
+      station: P.arrayOf(S).isRequired,
     })).isRequired,
-  },
+  })).isRequired,
 
-  fare: {
-    uri: S,
+  quickPlanner: P.arrayOf(P.shape({
     origin: S,
     destination: S,
-    sched_num: N,
-    trip: P.arrayOf(P.shape({
-      fare: N,
-      discount: P.array,
+    fare: S,
+    origTimeMin: S,
+    origTimeDate: S,
+    destTimeMin: S,
+    destTimeDate: S,
+    clipper: S,
+    leg: P.arrayOf(P.shape({
+      order: S,
+      transfercode: S,
+      origin: S,
+      destination: S,
+      origTimeMin: S,
+      origTimeDate: S,
+      destTimeMin: S,
+      destTimeDate: S,
+      line: S,
+      bikeflag: S,
+      trainHeadStation: S,
+      trainIdx: S,
     })).isRequired,
-  },
+  })).isRequired,
+
+  fare: P.arrayOf(P.shape({
+    fare: N,
+    discount: P.array,
+  })).isRequired,
 
   // TODO: unnest holiday property w/ post-transform
   holidays: P.arrayOf(P.shape({
@@ -171,49 +128,31 @@ const schemas = {
     schedule_type: S,
   })).isRequired,
 
-  loadFactor: {
-    uri: S,
-    load: P.arrayOf(P.shape({
-      request: P.arrayOf(P.shape({
-        schedueType: S,
-        scheduleID: S,
-        leg: P.arrayOf(P.shape({
-          id: S,
-          station: S,
-          route: S,
-          trainId: S,
-          load: S,
-        })).isRequired
-      })).isRequired
+  loadFactor: P.arrayOf(P.shape({
+    schedueType: S,
+    scheduleID: S,
+    leg: P.arrayOf(P.shape({
+      id: S,
+      station: S,
+      route: S,
+      trainId: S,
+      load: S,
     })).isRequired
-  },
+  })).isRequired,
 
-  routeSchedule: {
-    uri: S,
-    date: S,
-    sched_num: N,
-    route: P.arrayOf(P.shape({
-      train: P.arrayOf(P.shape({
-        index: S,
-        stop: P.arrayOf(P.shape({
-          bikeflag: S,
-          station: S,
-          origTime: P.string, // NOT REQUIRED
-        })).isRequired,
-      })).isRequired,
+  routeSchedule: P.arrayOf(P.shape({
+    index: S,
+    stop: P.arrayOf(P.shape({
+      bikeflag: S,
+      station: S,
+      origTime: P.string, // not always present
     })).isRequired,
-  },
+  })).isRequired,
 
-  availableSchedules: {
-    uri: S,
-    // TODO unnest this
-    schedules: P.arrayOf(P.shape({
-      schedule: P.arrayOf(P.shape({
-        id: S,
-        effectivedate: S,
-      })).isRequired,
-    })).isRequired,
-  },
+  availableSchedules: P.arrayOf(P.shape({
+    id: S,
+    effectivedate: S,
+  })).isRequired,
 
   specialSchedules: P.arrayOf(P.shape({
     start_date: S,
@@ -228,23 +167,18 @@ const schemas = {
     routes_affected: S,
   })).isRequired,
 
-  stationSchedule: {
-    uri: S,
-    date: S,
-    sched_num: N,
-    station: P.arrayOf(P.shape({
-      name: S,
-      abbr: S,
-      item: P.arrayOf(P.shape({
-        line: S,
-        trainHeadStation: S,
-        origTime: S,
-        destTime: S,
-        trainIdx: S,
-        bikeflag: S,
-      })).isRequired,
+  stationSchedule: P.arrayOf(P.shape({
+    name: S,
+    abbr: S,
+    item: P.arrayOf(P.shape({
+      line: S,
+      trainHeadStation: S,
+      origTime: S,
+      destTime: S,
+      trainIdx: S,
+      bikeflag: S,
     })).isRequired,
-  },
+  })).isRequired,
 
   stationList: P.arrayOf(P.shape({
     name: S,
@@ -313,15 +247,18 @@ const runMethod = (name, params, schema) => () => {
   return bart[name](params).then(validate(schema)).then(throwIfErr, throwIfErr);
 }
 
+const runAndLog = (name, params, schema) => () =>
+  runMethod(name, params, schema)().then(d => console.log(JSON.stringify(d, null, 2)));
+
 // PropTypes calls out to this
 console.warn = function (...args) {
   throw new Error(args.join());
 }
 
-const validate = schema => {
+function validate (schema) {
   if (schema == null) throw new Error("No schema!");
   return data => {
-    if (Array.isArray(data)) {
+    if (Array.isArray(data) || typeof schema === "function") {
       schema = {items: schema};
       data = {items: data};
     }
