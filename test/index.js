@@ -120,7 +120,6 @@ const schemas = {
     discount: P.array,
   })).isRequired,
 
-  // TODO: unnest holiday property w/ post-transform
   holidays: P.arrayOf(P.shape({
     name: S,
     date: S,
