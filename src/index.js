@@ -1,8 +1,11 @@
 const request = require("request");
 const parseString = require("xml2js").parseString;
 const HttpStatus = require("http-status");
+const _get = require("lodash.get");
+const _pick = require("lodash.pick");
 
-const R = require("ramda");
+const path = p => o => _get(o, p);
+const pick = p => o => _pick(o, p);
 
 // let defaults = {};
 
@@ -108,24 +111,24 @@ function makeEndpoint (methodName, namespace, cmd, xform) {
 }
 
 const methodConfigs = [
-  ["advisories", "bsa", "bsa", R.path(["bsa"])],
-  ["trainCount", "bsa", "count", R.pick(["traincount"])],
-  ["elevatorInformation", "bsa", "elev", R.path(["bsa"])],
-  ["realTimeEstimates", "etd", "etd", R.path(["station", 0, "etd"])],
-  ["routes", "route", "routes", R.path(["routes", 0, "route"])],
-  ["routesInformation", "route", "routeinfo", R.path(["routes", 0, "route"])],
-  ["quickPlannerArrive", "sched", "arrive", R.path(["schedule", 0, "request", 0, "trip"])],
-  ["quickPlannerDepart", "sched", "depart", R.path(["schedule", 0, "request", 0, "trip"])],
-  ["fare", "sched", "fare", R.path(["trip"])],
-  ["holidays", "sched", "holiday", R.path(["holidays", 0, "holiday"])],
-  ["loadFactor", "sched", "load", R.path(["load", 0, "request"])],
-  ["routeSchedule", "sched", "routesched", R.path(["route", 0, "train"])],
-  ["availableSchedules", "sched", "scheds", R.path(["schedules", 0, "schedule"])],
-  ["specialSchedules", "sched", "special", R.path(["special_schedules", 0, "special_schedule"])],
-  ["stationSchedule", "sched", "stnsched", R.path(["station"])],
-  ["stationList", "stn", "stns", R.path(["stations", 0, "station"])],
-  ["stationInformation", "stn", "stninfo", R.path(["stations", 0, "station", 0])],
-  ["stationAccessInformation", "stn", "stnaccess", R.path(["stations", 0, "station", 0])],
+  ["advisories", "bsa", "bsa", path(["bsa"])],
+  ["trainCount", "bsa", "count", pick(["traincount"])],
+  ["elevatorInformation", "bsa", "elev", path(["bsa"])],
+  ["realTimeEstimates", "etd", "etd", path(["station", 0, "etd"])],
+  ["routes", "route", "routes", path(["routes", 0, "route"])],
+  ["routesInformation", "route", "routeinfo", path(["routes", 0, "route"])],
+  ["quickPlannerArrive", "sched", "arrive", path(["schedule", 0, "request", 0, "trip"])],
+  ["quickPlannerDepart", "sched", "depart", path(["schedule", 0, "request", 0, "trip"])],
+  ["fare", "sched", "fare", path(["trip"])],
+  ["holidays", "sched", "holiday", path(["holidays", 0, "holiday"])],
+  ["loadFactor", "sched", "load", path(["load", 0, "request"])],
+  ["routeSchedule", "sched", "routesched", path(["route", 0, "train"])],
+  ["availableSchedules", "sched", "scheds", path(["schedules", 0, "schedule"])],
+  ["specialSchedules", "sched", "special", path(["special_schedules", 0, "special_schedule"])],
+  ["stationSchedule", "sched", "stnsched", path(["station"])],
+  ["stationList", "stn", "stns", path(["stations", 0, "station"])],
+  ["stationInformation", "stn", "stninfo", path(["stations", 0, "station", 0])],
+  ["stationAccessInformation", "stn", "stnaccess", path(["stations", 0, "station", 0])],
 ];
 
 methodConfigs.forEach(function ([methodName, namespace, cmd, xform]) {
