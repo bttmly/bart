@@ -9,6 +9,13 @@ Because the shape of responses is going to change. Specifically, nested response
 ## API
 Supports the following methods, which map directly to the BART API endpoints:
 
+```
+var Bart = require("bart-api") // npm name to be determined...
+var client = new Bart(/* api key */) // new optional
+```
+
+Alternately, you can call methods directly on the `Bart` object if you provide the API key as `key` in params. Each method takes an object of params as the first argument and an optional callback as the second. If no callback is provided, a promise is returned.
+
 - `advisories`
 - `trainCount`
 - `elevatorInformation`

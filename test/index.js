@@ -2,10 +2,9 @@ const P = require("prop-types");
 const S = P.string.isRequired;
 const N = P.number.isRequired;
 
-const bart = require("../src");
-
+const Bart = require("../src");
 // BART's public API key (http://www.bart.gov/schedules/developers/api)
-bart.setDefaults({key: "MW9S-E7SL-26DU-VV8V"});
+const client = new Bart("MW9S-E7SL-26DU-VV8V");
 
 function throwIfErr (data) {
   if (data == null) {
@@ -240,11 +239,11 @@ const runMethod = (name, params, schema) => () => {
     throw new Error("Missing schema for " + name);
   }
 
-  if (typeof bart[name] !== "function") {
+  if (typeof client[name] !== "function") {
     throw new Error("Missing method " + name);
   }
   
-  return bart[name](params).then(validate(schema)).then(throwIfErr, throwIfErr);
+  return client[name](params).then(validate(schema)).then(throwIfErr, throwIfErr);
 }
 
 const runAndLog = (name, params, schema) => () =>

@@ -4,13 +4,19 @@ const HttpStatus = require("http-status");
 
 const R = require("ramda");
 
-let defaults = {};
+// let defaults = {};
 
-module.exports = {
-  setDefaults (_defaults) {
-    defaults = {...defaults, ..._defaults};
-  },
+// module.exports = {
+//   setDefaults (_defaults) {
+//     defaults = {...defaults, ..._defaults};
+//   },
+// }
+
+function Bart (key) {
+  this._key = key;
 }
+
+Bart.stations = require("./stations.json");
 
 const isPrimitive = x => Object(x) !== x;
 
@@ -71,7 +77,7 @@ function makeEndpoint (methodName, namespace, cmd, xform) {
       });
     }
 
-    const qs = {...defaults, ...params, ...base};
+    const qs = {...params, ...base};
 
     function handle (err, result) {
       if (result) result = deepUnXml(result.root);
@@ -123,8 +129,12 @@ const methodConfigs = [
 ];
 
 methodConfigs.forEach(function ([methodName, namespace, cmd, xform]) {
-  module.exports[methodName] = makeEndpoint(methodName, namespace, cmd, xform);
+  Bart[methodName] = makeEndpoint(methodName, namespace, cmd, xform);
+  Bart.prototype[methodName] = function (params, cb) {
+    const _params = {...params, key: this._key};
+    return Bart[methodName](_params, cb);
+  };
 });
 
-module.exports.stations = require("./stations.json");
+module.exports = Bart;
 
