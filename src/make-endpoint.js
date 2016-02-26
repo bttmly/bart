@@ -33,17 +33,21 @@ function makeEndpoint (methodName, namespace, cmd, xform) {
         (err ? cb(err) : cb(null, result));
     }
 
-    request({url, qs}, function (err, resp, body) {
-      if (err) {
-        return handle(err);
-      }
+    if (typeof params.key !== "string") {
+      setImmediate(handle, new Error("Must pass an API key."));
+    } else {
+      request({url, qs}, function (err, resp, body) {
+        if (err) {
+          return handle(err);
+        }
 
-      if (resp.statusCode > 299) {
-        return handle(new Error(HttpStatus[resp.statusCode]));
-      }
+        if (resp.statusCode > 299) {
+          return handle(new Error(HttpStatus[resp.statusCode]));
+        }
 
-      parseString(body, handle);
-    });
+        parseString(body, handle);
+      });
+    }
 
     if (promise) return promise;
   }

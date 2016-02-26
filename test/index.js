@@ -243,7 +243,7 @@ const runMethod = (name, params, schema) => () => {
   }
   
   return client[name](params).then(validate(schema)).then(throwIfErr, throwIfErr);
-}
+};
 
 const runAndLog = (name, params, schema) => () =>
   runMethod(name, params, schema)().then(d => console.log(JSON.stringify(d, null, 2)));
@@ -251,7 +251,7 @@ const runAndLog = (name, params, schema) => () =>
 // PropTypes calls out to this
 console.warn = function (...args) {
   throw new Error(args.join());
-}
+};
 
 function validate (schema) {
   if (schema == null) throw new Error("No schema!");
@@ -271,10 +271,10 @@ function validate (schema) {
 }
 
 describe("bart api", () => {
-  it("advisories", runMethod("advisories", {}, schemas.advisories))
-  it("trainCount", runMethod("trainCount", {}, schemas.trainCount))
-  it("elevatorInformation", runMethod("elevatorInformation", {orig: "mcar"}, schemas.elevatorInformation))
-  it("realTimeEstimates", runMethod("realTimeEstimates", {orig: "mcar"}, schemas.realTimeEstimates))
+  it("advisories", runMethod("advisories", {}, schemas.advisories));
+  it("trainCount", runMethod("trainCount", {}, schemas.trainCount));
+  it("elevatorInformation", runMethod("elevatorInformation", {orig: "mcar"}, schemas.elevatorInformation));
+  it("realTimeEstimates", runMethod("realTimeEstimates", {orig: "mcar"}, schemas.realTimeEstimates));
   it("routes", runMethod("routes", {}, schemas.routes));
   it("routesInformation", runMethod("routesInformation", {route: 1}, schemas.routesInformation));
   it("quickPlannerArrive", runMethod("quickPlannerArrive", {orig: "mcar", dest: "19th"}, schemas.quickPlanner));
