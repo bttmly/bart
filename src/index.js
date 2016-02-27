@@ -6,6 +6,7 @@ const _pick = require("lodash.pick");
 const pick = p => o => _pick(o, p);
 
 function Bart (key) {
+  if (!(this instanceof Bart)) return new Bart(key);
   this._key = key;
 }
 
