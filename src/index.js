@@ -10,6 +10,7 @@ function Bart (key) {
 }
 
 Bart.stations = require("../data/stations");
+Bart.coords = require("../data/coords");
 
 const methodConfigs = [
   ["advisories", "bsa", "bsa", get(["bsa"])],
