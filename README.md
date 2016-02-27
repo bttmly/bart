@@ -2,19 +2,16 @@
 
 A small Node wrapper around the [BART XML API](http://api.bart.gov/docs/overview/index.aspx).
 
-## Why isn't this on `npm`?
-
-Because the shape of responses is going to change. Specifically, nested responses are going to be flattened for a more ergonomic API. This will be resolved soon and published to `npm` at that point.
-
-## API
-Supports the following methods, which map directly to the BART API endpoints:
+## Installation & Usage
 
 ```
-var Bart = require("bart-api") // npm name to be determined...
+var Bart = require("bay-area-rapid-trasit") // "bart" was taken
 var client = new Bart(/* api key */) // new optional
 ```
 
 Alternately, you can call methods directly on the `Bart` object if you provide the API key as `key` in params. Each method takes an object of params as the first argument and an optional callback as the second. If no callback is provided, a promise is returned.
+
+Supports the following methods, which map directly to the BART API endpoints:
 
 - `advisories`
 - `trainCount`
