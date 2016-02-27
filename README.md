@@ -5,7 +5,7 @@ A small Node wrapper around the [BART XML API](http://api.bart.gov/docs/overview
 ## Installation & Usage
 
 ```js
-var Bart = require("bay-area-rapid-trasit") // "bart" was taken
+var Bart = require("bay-area-rapid-transit") // "bart" was taken
 var client = new Bart(/* api key */) // new optional
 ```
 
