@@ -7,11 +7,9 @@ function maybeToNumber (str) {
 function jsifyXmlObj (obj) {
   if (isPrimitive(obj)) return maybeToNumber(obj);
 
-  const keys = Object.keys(obj);
-
   return Object.keys(obj).reduce((out, k) => {
     const val = maybeToNumber(obj[k]);
-    
+
     if (k === "$") {
       return val;
     } else if (Array.isArray(val) && val.length === 1 && isPrimitive(val[0])) {

@@ -5,9 +5,15 @@ const get = p => o => _get(o, p);
 const _pick = require("lodash.pick");
 const pick = p => o => _pick(o, p);
 
-function Bart (key) {
-  if (!(this instanceof Bart)) return new Bart(key);
-  this._key = key;
+function Bart (opts) {
+  if (!(this instanceof Bart)) return new Bart(opts);
+
+  if (typeof opts === "string") {
+    this._key = opts;
+  } else {
+    this._key = opts.key;
+    this._fetch = opts.fetch;
+  }
 }
 
 Bart.stations = require("../data/stations");
@@ -35,14 +41,14 @@ const methodConfigs = [
 ];
 
 methodConfigs.forEach(function ([methodName, namespace, cmd, xform]) {
-  
+
   Bart[methodName] = makeEndpoint(methodName, namespace, cmd, xform);
-  
-  Bart.prototype[methodName] = function (params, cb) {
-    return Bart[methodName]({...params, key: this._key}, cb);
+
+  Bart.prototype[methodName] = function (_params) {
+    const params = Object.assign({}, _params, { key: this._key });
+    return Bart[methodName](params, { fetch: this._fetch });
   };
 
 });
 
 module.exports = Bart;
-

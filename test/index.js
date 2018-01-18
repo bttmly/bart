@@ -1,35 +1,14 @@
 const P = require("prop-types");
 const S = P.string.isRequired;
 const N = P.number.isRequired;
-
+const { fetch } = require("fetch-ponyfill")();
 const Bart = require("../src");
+
 // BART's public API key (http://www.bart.gov/schedules/developers/api)
-const client = new Bart("MW9S-E7SL-26DU-VV8V");
-
-function throwIfErr (data) {
-  if (data == null) {
-    throw new Error("No data!");
-  }
-
-  if (data instanceof Error) {
-    throw data;
-  }
-
-  if (data.message && data.message[0].error) {
-    throw new Error(data.message[0].error[0].details);
-  }
-
-  return data;
-}
-
-const base = {
-  uri: S,
-  date: S,
-  time: S,
-};
+const client = new Bart({ key: "MW9S-E7SL-26DU-VV8V", fetch });
 
 const schemas = {
-  
+
   advisories: P.arrayOf(P.shape({
     station: S,
     description: S,
@@ -41,13 +20,13 @@ const schemas = {
   },
 
   elevatorInformation: P.arrayOf(P.shape({
-    id: S,
+    id: P.string,
     station: S,
-    type: S,
+    type: P.string,
     description: S,
     sms_text: S,
-    posted: S,
-    expires: S,
+    posted: P.string,
+    expires: P.string,
   })).isRequired,
 
   realTimeEstimates: P.arrayOf(P.shape({
@@ -61,7 +40,7 @@ const schemas = {
       length: N,
       color: S,
       hexcolor: S,
-      bikeflag: N
+      bikeflag: N,
     })).isRequired,
   })).isRequired,
 
@@ -135,7 +114,7 @@ const schemas = {
       route: S,
       trainId: S,
       load: S,
-    })).isRequired
+    })).isRequired,
   })).isRequired,
 
   routeSchedule: P.arrayOf(P.shape({
@@ -233,7 +212,7 @@ const schemas = {
   },
 };
 
-const runMethod = (name, params, schema) => () => {
+const runMethod = (name, params, schema) => async () => {
   if (schema == null) {
     throw new Error("Missing schema for " + name);
   }
@@ -241,12 +220,15 @@ const runMethod = (name, params, schema) => () => {
   if (typeof client[name] !== "function") {
     throw new Error("Missing method " + name);
   }
-  
-  return client[name](params).then(validate(schema)).then(throwIfErr, throwIfErr);
+
+  const result = await client[name](params);
+  await validate(schema)(result);
 };
 
-const runAndLog = (name, params, schema) => () =>
-  runMethod(name, params, schema)().then(d => console.log(JSON.stringify(d, null, 2)));
+// const runAndLog = (name, params, schema) => async () => {
+//   const d = await runMethod(name, params, schema)()
+//   console.log(JSON.stringify(d, null, 2));
+// }
 
 // PropTypes calls out to this
 console.warn = function (...args) {

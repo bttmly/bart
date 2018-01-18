@@ -1,7 +1,5 @@
-const request = require("request");
-const parseString = require("xml2js").parseString;
-const HttpStatus = require("http-status");
-
+const pify = require("pify");
+const parseString = pify(require("xml2js").parseString);
 const jsify = require("./jsify-xml-obj");
 const setFnName = require("./set-fn-name");
 
@@ -9,52 +7,33 @@ function makeEndpoint (methodName, namespace, cmd, xform) {
   const url = `http://api.bart.gov/api/${namespace}.aspx`;
   const base = {cmd};
 
-  function makeRequest (params, cb) {
-    let resolve, reject, promise;
-
-    if (params == null) {
-      cb = params;
-      params = {};
-    }
-
-    if (typeof cb !== "function") {
-      promise = new Promise(function (_resolve, _reject) {
-        resolve = _resolve; reject = _reject;
-      });
-    }
+  function makeRequest (params, { fetch } = {}) {
+    if (fetch == null) fetch = global.fetch;
 
     const qs = {...params, ...base};
 
-    function handle (err, result) {
-      if (result) result = jsify(result.root);
-      if (result && xform && !params.raw) result = xform(result); // TODO test raw
-      promise ?
-        (err ? reject(err) : resolve(result)) :
-        (err ? cb(err) : cb(null, result));
-    }
-
     if (typeof params.key !== "string") {
-      setImmediate(handle, new Error("Must pass an API key."));
-    } else {
-      request({url, qs}, function (err, resp, body) {
-        if (err) {
-          return handle(err);
-        }
-
-        if (resp.statusCode > 299) {
-          return handle(new Error(HttpStatus[resp.statusCode]));
-        }
-
-        parseString(body, handle);
-      });
+      return Promise.reject(new Error("Must pass an API key."));
     }
 
-    if (promise) return promise;
+    return fetch(makeURL({ url, qs }))
+      .then((r) => r.text())
+      .then(parseString)
+      .then((result) => {
+        result = jsify(result.root);
+        if (result && xform && !params.raw) result = xform(result);
+        return result;
+      });
   }
-
   setFnName(makeRequest, methodName);
-
   return makeRequest;
+}
+
+function makeURL ({ url, qs }) {
+  const query = Object.keys(qs)
+    .map(k => encodeURIComponent(k) + "=" + encodeURIComponent(qs[k]))
+    .join("&");
+  return `${url}?${query}`;
 }
 
 module.exports = makeEndpoint;
