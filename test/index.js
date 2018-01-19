@@ -1,6 +1,8 @@
+const assert = require("assert");
 const P = require("prop-types");
 const S = P.string.isRequired;
 const N = P.number.isRequired;
+const pReflect = require("p-reflect");
 const { fetch } = require("fetch-ponyfill")();
 const Bart = require("../src");
 
@@ -51,7 +53,6 @@ const schemas = {
     number: N,
     color: S,
   })).isRequired,
-
 
   routesInformation: P.arrayOf(P.shape({
     name: S,
@@ -232,7 +233,7 @@ const runMethod = (name, params, schema) => async () => {
 
 // PropTypes calls out to this
 console.warn = function (...args) {
-  throw new Error(args.join());
+  throw new Error(args.join(" "));
 };
 
 function validate (schema) {
@@ -274,7 +275,19 @@ describe("bart api", () => {
     it("stationAccessInformation", runMethod("stationAccessInformation", {orig: "mcar"}, schemas.stationAccessInformation));
   })
 
-  it("invalid requests", () => {
-    
+  describe("invalid requests", () => {
+    it("throws an informative error", async () => {
+      const f = runMethod("realTimeEstimates", { /* 'orig' field is missing */ }, schemas.realTimeEstimates);
+      await shouldReject(f(), (err) => {
+        assert.equal(err.message, "Invalid orig");
+        assert.equal(err.details, "The orig station parameter  is missing or invalid.");
+      })
+    })
   })
 });
+
+async function shouldReject (p, f) {
+  const result = await pReflect(p);
+  assert.ok(result.isRejected, "Expected promise to reject, but it fulfilled");
+  f(result.reason);
+}

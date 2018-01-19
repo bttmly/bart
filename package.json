@@ -25,6 +25,7 @@
     "eslint-plugin-import": "^2.8.0",
     "fetch-ponyfill": "^4.1.0",
     "mocha": "^2.3.4",
+    "p-reflect": "^1.0.0",
     "prop-types": "^0.1.0"
   }
 }
