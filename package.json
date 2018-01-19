@@ -9,26 +9,20 @@
   "scripts": {
     "lint": "eslint ./src",
     "test": "npm run lint; mocha --timeout 10000 ./test/index.js --bail",
-    "build": "babel ./src --out-dir ./lib",
-    "prepublish": "npm run test; npm run build"
+    "prepublish": "npm run test;"
   },
   "author": "Nick Bottomley (github.com/nickb1080)",
   "license": "MIT",
   "dependencies": {
-    "http-status": "^0.2.0",
+    "eslint": "^4.15.0",
     "lodash.get": "^4.1.2",
     "lodash.pick": "^4.1.0",
     "pify": "^3.0.0",
-    "request": "^2.67.0",
     "xml2js": "^0.4.15"
   },
   "devDependencies": {
-    "@babel/cli": "7.0.0-beta.38",
-    "@babel/core": "7.0.0-beta.38",
-    "@babel/preset-env": "^7.0.0-beta.38",
-    "@babel/register": "^7.0.0-beta.38",
-    "babel-eslint": "^8.2.1",
-    "eslint": "^4.15.0",
+    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-plugin-import": "^2.8.0",
     "fetch-ponyfill": "^4.1.0",
     "mocha": "^2.3.4",
     "prop-types": "^0.1.0"

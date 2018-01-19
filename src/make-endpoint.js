@@ -10,7 +10,7 @@ function makeEndpoint (methodName, namespace, cmd, xform) {
   function makeRequest (params, { fetch } = {}) {
     if (fetch == null) fetch = global.fetch;
 
-    const qs = {...params, ...base};
+    const qs = Object.assign({}, params,  base);
 
     if (typeof params.key !== "string") {
       return Promise.reject(new Error("Must pass an API key."));

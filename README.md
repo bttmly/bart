@@ -33,4 +33,3 @@ Supports the following methods, which map directly to the BART API endpoints:
 - `stationAccessInformation`
 
 `test/index.js` has integration tests for each method and schemas against which the responses are validated. More documentation may eventually be added to this readme but the test file should suffice for most uses.
-
