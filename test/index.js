@@ -253,22 +253,28 @@ function validate (schema) {
 }
 
 describe("bart api", () => {
-  it("advisories", runMethod("advisories", {}, schemas.advisories));
-  it("trainCount", runMethod("trainCount", {}, schemas.trainCount));
-  it("elevatorInformation", runMethod("elevatorInformation", {orig: "mcar"}, schemas.elevatorInformation));
-  it("realTimeEstimates", runMethod("realTimeEstimates", {orig: "mcar"}, schemas.realTimeEstimates));
-  it("routes", runMethod("routes", {}, schemas.routes));
-  it("routesInformation", runMethod("routesInformation", {route: 1}, schemas.routesInformation));
-  it("quickPlannerArrive", runMethod("quickPlannerArrive", {orig: "mcar", dest: "19th"}, schemas.quickPlanner));
-  it("quickPlannerDepart", runMethod("quickPlannerDepart", {orig: "mcar", dest: "19th"}, schemas.quickPlanner));
-  it("fare", runMethod("fare", {orig: "mcar", dest: "19th"}, schemas.fare));
-  it("holidays", runMethod("holidays", {}, schemas.holidays));
-  it("loadFactor", runMethod("loadFactor", {ld1: "mcar0101"}, schemas.loadFactor));
-  it("routeSchedule", runMethod("routeSchedule", {route: 1}, schemas.routeSchedule));
-  it("availableSchedules", runMethod("availableSchedules", {}, schemas.availableSchedules));
-  it("specialSchedules", runMethod("specialSchedules", {}, schemas.specialSchedules));
-  it("stationSchedule", runMethod("stationSchedule", {orig: "mcar"}, schemas.stationSchedule));
-  it("stationList", runMethod("stationList", {}, schemas.stationList));
-  it("stationInformation", runMethod("stationInformation", {orig: "mcar"}, schemas.stationInformation));
-  it("stationAccessInformation", runMethod("stationAccessInformation", {orig: "mcar"}, schemas.stationAccessInformation));
+  describe("valid requests", () =>  {
+    it("advisories", runMethod("advisories", {}, schemas.advisories));
+    it("trainCount", runMethod("trainCount", {}, schemas.trainCount));
+    it("elevatorInformation", runMethod("elevatorInformation", {orig: "mcar"}, schemas.elevatorInformation));
+    it("realTimeEstimates", runMethod("realTimeEstimates", {orig: "mcar"}, schemas.realTimeEstimates));
+    it("routes", runMethod("routes", {}, schemas.routes));
+    it("routesInformation", runMethod("routesInformation", {route: 1}, schemas.routesInformation));
+    it("quickPlannerArrive", runMethod("quickPlannerArrive", {orig: "mcar", dest: "19th"}, schemas.quickPlanner));
+    it("quickPlannerDepart", runMethod("quickPlannerDepart", {orig: "mcar", dest: "19th"}, schemas.quickPlanner));
+    it("fare", runMethod("fare", {orig: "mcar", dest: "19th"}, schemas.fare));
+    it("holidays", runMethod("holidays", {}, schemas.holidays));
+    it("loadFactor", runMethod("loadFactor", {ld1: "mcar0101"}, schemas.loadFactor));
+    it("routeSchedule", runMethod("routeSchedule", {route: 1}, schemas.routeSchedule));
+    it("availableSchedules", runMethod("availableSchedules", {}, schemas.availableSchedules));
+    it("specialSchedules", runMethod("specialSchedules", {}, schemas.specialSchedules));
+    it("stationSchedule", runMethod("stationSchedule", {orig: "mcar"}, schemas.stationSchedule));
+    it("stationList", runMethod("stationList", {}, schemas.stationList));
+    it("stationInformation", runMethod("stationInformation", {orig: "mcar"}, schemas.stationInformation));
+    it("stationAccessInformation", runMethod("stationAccessInformation", {orig: "mcar"}, schemas.stationAccessInformation));
+  })
+
+  it("invalid requests", () => {
+    
+  })
 });

@@ -7,7 +7,7 @@ function makeEndpoint (methodName, namespace, cmd, xform) {
   const url = `http://api.bart.gov/api/${namespace}.aspx`;
   const base = {cmd};
 
-  function makeRequest (params, { fetch } = {}) {
+  function makeRequest (params, { fetch, raw } = {}) {
     if (fetch == null) fetch = global.fetch;
 
     const qs = Object.assign({}, params,  base);
@@ -21,7 +21,7 @@ function makeEndpoint (methodName, namespace, cmd, xform) {
       .then(parseString)
       .then((result) => {
         result = jsify(result.root);
-        if (result && xform && !params.raw) result = xform(result);
+        if (result && xform && !raw) result = xform(result);
         return result;
       });
   }
@@ -35,5 +35,7 @@ function makeURL ({ url, qs }) {
     .join("&");
   return `${url}?${query}`;
 }
+
+const isError = get([ "message", 0, "error" ]);
 
 module.exports = makeEndpoint;
