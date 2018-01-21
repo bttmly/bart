@@ -50,7 +50,12 @@ const methodConfigs = [
   ["stationAccessInformation", "stn", "stnaccess", get(["stations", 0, "station", 0])],
 ];
 
-methodConfigs.forEach(function ([methodName, namespace, cmd, xform]) {
+methodConfigs.forEach(function (config) {
+
+  const methodName = config[0];
+  const namespace = config[1];
+  const cmd = config[2];
+  const xform = config[3];
 
   Bart[methodName] = makeEndpoint(methodName, namespace, cmd, xform);
 
