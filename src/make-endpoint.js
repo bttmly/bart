@@ -4,7 +4,7 @@ const setFnName = require("./set-fn-name");
 const get = require("lodash/fp/get");
 
 function makeEndpoint (methodName, namespace, cmd, xform) {
-  const url = `http://api.bart.gov/api/${namespace}.aspx`;
+  const url = `https://api.bart.gov/api/${namespace}.aspx`;
   const base = {cmd};
 
   function makeRequest (params, { fetch, raw } = {}) {
