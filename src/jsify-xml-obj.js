@@ -1,4 +1,6 @@
-const isPrimitive = x => Object(x) !== x;
+function isPrimitive (x) {
+  return Object(x) !== x;
+}
 
 function maybeToNumber (str) {
   return (str == "" || isNaN(Number(str))) ? str : Number(str);
@@ -7,7 +9,7 @@ function maybeToNumber (str) {
 function jsifyXmlObj (obj) {
   if (isPrimitive(obj)) return maybeToNumber(obj);
 
-  return Object.keys(obj).reduce((out, k) => {
+  return Object.keys(obj).reduce(function (out, k) {
     const val = maybeToNumber(obj[k]);
 
     if (k === "$") {

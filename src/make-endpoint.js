@@ -18,9 +18,9 @@ function makeEndpoint (methodName, namespace, cmd, xform) {
     }
 
     return fetch(makeURL({ url, qs }))
-      .then((r) => r.text())
+      .then(function (r) { return r.text() })
       .then(parseString)
-      .then((result) => {
+      .then(function (result) {
         result = jsify(result.root);
         const errData = getError(result)
         if (errData) {
@@ -36,7 +36,7 @@ function makeEndpoint (methodName, namespace, cmd, xform) {
 
 function makeURL ({ url, qs }) {
   const query = Object.keys(qs)
-    .map(k => encodeURIComponent(k) + "=" + encodeURIComponent(qs[k]))
+    .map(function (k) { return encodeURIComponent(k) + "=" + encodeURIComponent(qs[k]) })
     .join("&");
   return `${url}?${query}`;
 }

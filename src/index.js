@@ -1,9 +1,19 @@
 const makeEndpoint = require("./make-endpoint");
 
 const _get = require("lodash.get");
-const get = p => o => _get(o, p);
 const _pick = require("lodash.pick");
-const pick = p => o => _pick(o, p);
+
+function get (p) {
+  return function (o) {
+    return _get(o, p)
+  }
+}
+
+function pick (p) {
+  return function (o) {
+    return _pick(o, p)
+  }
+}
 
 function Bart (opts) {
   if (!(this instanceof Bart)) return new Bart(opts);
