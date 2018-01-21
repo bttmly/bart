@@ -1,11 +1,3 @@
-function isPrimitive (x) {
-  return Object(x) !== x;
-}
-
-function maybeToNumber (str) {
-  return (str == "" || isNaN(Number(str))) ? str : Number(str);
-}
-
 function jsifyXmlObj (obj) {
   if (isPrimitive(obj)) return maybeToNumber(obj);
 
@@ -29,3 +21,11 @@ function jsifyXmlObj (obj) {
 }
 
 module.exports = jsifyXmlObj;
+
+function isPrimitive (x) {
+  return Object(x) !== x;
+}
+
+function maybeToNumber (str) {
+  return (str == "" || isNaN(Number(str))) ? str : Number(str);
+}

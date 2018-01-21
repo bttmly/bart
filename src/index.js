@@ -1,19 +1,7 @@
+const get = require("lodash/fp/get");
+const pick = require("lodash/fp/pick");
+
 const makeEndpoint = require("./make-endpoint");
-
-const _get = require("lodash.get");
-const _pick = require("lodash.pick");
-
-function get (p) {
-  return function (o) {
-    return _get(o, p)
-  }
-}
-
-function pick (p) {
-  return function (o) {
-    return _pick(o, p)
-  }
-}
 
 function Bart (opts) {
   if (!(this instanceof Bart)) return new Bart(opts);
@@ -50,12 +38,7 @@ const methodConfigs = [
   ["stationAccessInformation", "stn", "stnaccess", get(["stations", 0, "station", 0])],
 ];
 
-methodConfigs.forEach(function (config) {
-
-  const methodName = config[0];
-  const namespace = config[1];
-  const cmd = config[2];
-  const xform = config[3];
+methodConfigs.forEach(function ([ methodName, namespace, cmd, xform ]) {
 
   Bart[methodName] = makeEndpoint(methodName, namespace, cmd, xform);
 
