@@ -1,5 +1,4 @@
-const pify = require("pify");
-const parseString = pify(require("xml2js").parseString);
+const parseString = promisify(require("xml2js").parseString);
 const jsify = require("./jsify-xml-obj");
 const setFnName = require("./set-fn-name");
 const get = require("lodash/fp/get");
@@ -36,9 +35,22 @@ function makeEndpoint (methodName, namespace, cmd, xform) {
 
 function makeURL ({ url, qs }) {
   const query = Object.keys(qs)
-    .map(function (k) { return encodeURIComponent(k) + "=" + encodeURIComponent(qs[k]) })
+    .map(k => encodeURIComponent(k) + "=" + encodeURIComponent(qs[k]))
     .join("&");
   return `${url}?${query}`;
+}
+
+// tried to use `pify` module but browser bundler complained about it being
+// not ES5
+function promisify (f) {
+  return function (...args) {
+    return new Promise((resolve, reject) => {
+      f(...args, function (err, result) {
+        if (err) return reject(err);
+        resolve(result);
+      })
+    })
+  }
 }
 
 class BartError extends Error {
