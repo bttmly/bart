@@ -1,17 +1,16 @@
 const path = require("path");
 const fs = require("fs");
 
-global.fetch = require("fetch-ponyfill")().fetch;
+const { fetch } = require("fetch-ponyfill")();
 
-const Bart = require("../");
-const client = new Bart("MW9S-E7SL-26DU-VV8V");
-const keys = Object.keys(Bart.stations);
+const Bart = require("../src");
+// BART's public API key (http://www.bart.gov/schedules/developers/api)
+const client = new Bart({ key: "MW9S-E7SL-26DU-VV8V", fetch });
 
 (async function main () {
 
+  const keys = (await client.stationList()).map((s) => s.abbr);
   const stations = await Promise.all(keys.map(k => client.stationInformation({orig: k})))
-
-  console.log("s[0]", stations[0])
 
   const coords = {};
   const abbrevs = {};

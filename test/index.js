@@ -2,7 +2,6 @@ const assert = require("assert");
 const P = require("prop-types");
 const S = P.string.isRequired;
 const N = P.number.isRequired;
-const pReflect = require("p-reflect");
 const { fetch } = require("fetch-ponyfill")();
 const Bart = require("../src");
 
@@ -278,16 +277,18 @@ describe("bart api", () => {
   describe("invalid requests", () => {
     it("throws an informative error", async () => {
       const f = runMethod("realTimeEstimates", { /* 'orig' field is missing */ }, schemas.realTimeEstimates);
-      await shouldReject(f(), (err) => {
-        assert.equal(err.message, "Invalid orig");
-        assert.equal(err.details, "The orig station parameter  is missing or invalid.");
-      })
+      const err = await getRejection(f())
+      assert.equal(err.message, "Invalid orig");
+      assert.equal(err.details, "The orig station parameter  is missing or invalid.");
     })
   })
 });
 
-async function shouldReject (p, f) {
-  const result = await pReflect(p);
-  assert.ok(result.isRejected, "Expected promise to reject, but it fulfilled");
-  f(result.reason);
+async function getRejection (p) {
+  try {
+    await p
+  } catch (err) {
+    return err;
+  }
+  throw new Error("Expected promise to reject, but it fulfilled")
 }
